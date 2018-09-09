@@ -3,12 +3,14 @@ An archive extractor tool for the DOS game Eradicator (1996).
 
 ## Usage
 	erad_ripper <file>
-Where <file> is one of the following 3 files passed as an argument (in Windows  you can also use the drag-and-drop method):
+Where \<file> is one of the following 3 files passed as an argument (in Windows  you can also use the drag-and-drop method):
 - MAIN.RID
 - AMBIENT.RAW
 - MUSIC.RAW
+
 MAIN.RID is the game's archive containing pretty much everything; the 2 .RAW files are the background music files used in-game and for the menu, respectively.   
 If you're invoking it from the command line, keep in mind that the tool is case-sensitive, so e.g. this won't work:
+
 	erad_ripper main.rid
 as well as any other command where the file passed as a parameter isn't entirely uppercase.
 
@@ -28,6 +30,6 @@ All picture-related material is extracted as .TGA pictures, which can be viewed 
 IrfanView (albeit without transparency), SLADE3, MtPaint, and possibly other image viewers I'm unaware of;
 if that's still a problem for you, Ken Silverman's PNGOUT is your friend :)
 
-As a last note, I couldn't find anything that associates pictures to its respective palette; if I were to take a guess,  
-it looks like the game uses a fixed palette + graphics combination for each mission set, which is the reason why you must select  
-the palette manually at the beginning of the extraction process. As tedious as it may be, I couldn't come up with any other solution, sorry about that.
+As a last note, I couldn't find anything that associates each picture to its respective palette; if I were to take a guess,  
+it looks like the game uses a fixed palette + graphics combination for each mission set, which is the reason why you
+must select the palette manually at the beginning of the extraction process. As tedious as it may be, I couldn't come up with any other solution, sorry about that.
