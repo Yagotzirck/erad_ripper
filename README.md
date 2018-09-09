@@ -12,7 +12,7 @@ MAIN.RID is the game's archive containing pretty much everything; the 2 .RAW fil
 If you're invoking it from the command line, keep in mind that the tool is case-sensitive, so e.g. this won't work:
 
 	erad_ripper main.rid
-as well as any other command where the file passed as a parameter isn't entirely uppercase.
+as well as any other command where the file passed as a parameter isn't wholly uppercase.
 
 Once the extractor has done its thing, you should have the extracted resources in a subfolder
 located in the same path as the file you passed as a parameter (if you didn't use the drag-and-drop method, you should see the subfolder's path
