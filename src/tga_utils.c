@@ -92,14 +92,16 @@ void write_shrunk_tga_pal(FILE *stream){
 
 /* shrink_tga(): compress both palette (by deleting unused entries) and data(RLE encoding)*/
 int shrink_tga(BYTE imgDest[], BYTE imgBuf[], DWORD size, WORD *CMapLen){
-    BYTE used_indexes[256] = {0};
+        BYTE used_indexes[256] = {0};
     unsigned int i = 0, j = 0;
+    unsigned int pixelRunStart;
 
     BYTE RLE_byte;
 
     *CMapLen = shrink_palette(imgBuf, size, used_indexes);
 
     do{
+        pixelRunStart = i;
         RLE_byte = 0;
         while(i + 1 < size && imgBuf[i+1] == imgBuf[i]){
             ++RLE_byte;
@@ -109,8 +111,48 @@ int shrink_tga(BYTE imgDest[], BYTE imgBuf[], DWORD size, WORD *CMapLen){
                 break;
         }
 
-        imgDest[j++] =  RLE_byte | 0x80;
-        imgDest[j++] =  used_indexes[imgBuf[i++]];
+        /* in order to get an actual gain, we need at least 3 consecutive pixels:
+        ** 1 would actually double the size since it would add the RLE byte to the single pixel,
+        ** and 2 would keep the size identical (RLE byte + pixel vs. pixel repeated 2 times),
+        ** so it wouldn't make any sense either
+        */
+        if(RLE_byte >= 2){    // we got a gain
+            imgDest[j++] =  RLE_byte | 0x80;
+            imgDest[j++] =  used_indexes[imgBuf[i++]];
+        }
+        else{ // check how many subsequent pixels unworthy of being RLE'd there are
+            unsigned int identicalPixelsCount = 0;
+            ++i;
+            while(i + 1 < size && RLE_byte < 127){
+
+                if(imgBuf[i+1] == imgBuf[i])
+                    ++identicalPixelsCount;
+                else
+                    identicalPixelsCount = 0;
+
+                /* 3 subsequent identical pixels counted(possibly more after);
+                ** we can break the run of pixels unworthy of being RLE'd
+                */
+                if(identicalPixelsCount == 2){
+                    --i;
+                    --RLE_byte;
+                    break;
+                }
+
+                ++i;
+                ++RLE_byte;
+            }
+
+            /* put the RLE byte and the run of subsequent pixels unworthy of being RLE'd
+            ** in the destination buffer
+            */
+            imgDest[j++] = RLE_byte;
+            for(unsigned k = pixelRunStart; k < i; ++k)
+                imgDest[j++] = used_indexes[imgBuf[k]];
+
+        }
+
+
     }while(i < size);
 
     /* if the RLE compression resulted in increased size keep the data in its raw form
