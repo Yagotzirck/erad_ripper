@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "makedir.h"
 #include "utils.h"
@@ -171,10 +172,11 @@ int main(int argc, char **argv){
 /* local functions definitions */
 
 static enum fileArgID identify_entry(const char *argStr){
-
-
     unsigned i;
     const char *argFileName;
+
+    char uppercase_argFileName[FILENAME_MAX];
+
 
     // get the argument's filename without subdirectories(if any)
     argFileName = argStr + strlen(argStr);
@@ -185,12 +187,21 @@ static enum fileArgID identify_entry(const char *argStr){
     if(argFileName == '/' || *argFileName == '\\')
         ++argFileName;
 
+    /* get rid of case sensitivity for filename comparison,
+    ** otherwise only uppercase parameters would be accepted
+    ** (e.g. "main.rid" passed as a parameter wouldn't be recognized as
+    ** a supported entry)
+    */
+    for(i = 0; argFileName[i] != '\0'; ++i)
+        uppercase_argFileName[i] = toupper(argFileName[i]);
+    uppercase_argFileName[i] = '\0';
 
+    // check if the filename passed as a parameter is supported
     for(i = 0; i < sizeof(fileArg) / sizeof(fileArg[0]); ++i)
-        if(strcmp(argFileName, fileArg[i]) == 0)
+        if(strcmp(uppercase_argFileName, fileArg[i]) == 0)
             return i;
 
-    fprintf(stderr, "%s isn't a file supported by this extractor\n", argStr);
+    fprintf(stderr, "%s isn't a file supported by this extractor.\n", argStr);
     exit(EXIT_FAILURE);
 }
 
