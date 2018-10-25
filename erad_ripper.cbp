@@ -43,12 +43,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/rip_palettes.h" />
-		<Unit filename="src/rip_pictures.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="src/rip_skies.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="src/rip_sounds.c">
 			<Option compilerVar="CC" />
 		</Unit>
